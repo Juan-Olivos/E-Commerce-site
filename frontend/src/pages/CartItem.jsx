@@ -5,7 +5,7 @@ function CartItem({ Item }) {
 
     return (
         <div className="CartItem-container">
-            <p className="CartItem-title">{Item.product.name}</p>
+            <p className="CartItem-title">{Item.product_name}</p>
             <p className="CartItem-title">{Item.quantity}</p>
             
             {/* <button className="delete-button" onClick={() => onDelete(CartItem.id)}>

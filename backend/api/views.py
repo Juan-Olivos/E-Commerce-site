@@ -30,13 +30,6 @@ class ProductCreate(generics.CreateAPIView):
     # a product can only be added by an admin, not by a user
     permission_classes = [IsAdminUser]
 
-# class ListCreateTestItemView(generics.ListCreateAPIView):
-#     queryset = TestItem.objects.all()
-#     serializer_class = TestItemSerializer
-
-    # only a user should be able to see and create their own item(eg. their cart)
-    permission_classes = [IsAuthenticated]
-
 class ListOrderItemsView(generics.ListCreateAPIView):
     serializer_class = OrderItemSerializer
     permission_classes = [IsAuthenticated]
@@ -78,3 +71,30 @@ class ListOrderItemsView(generics.ListCreateAPIView):
 
         serializer = self.get_serializer(order_item)
         return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+    
+
+class RUDOrderItemView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = OrderItemSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = OrderItem.objects.all()
+
+    # assuming id will always be present
+    def update(self, request, *args, **kwargs):
+        order_item_id = kwargs.get('pk')
+
+        order_item = OrderItem.objects.get(id=order_item_id, order__customer_id=self.request.user.id, order__is_completed=False)
+
+        # assume frontend passes action to increase or decrease item quantity
+        action = request.data.get('action')
+        if action == 'add':
+            order_item.quantity = F('quantity') + 1
+        elif action == 'sub':
+            order_item.quantity = F('quantity') - 1
+        else:
+            return Response({'error': 'Invalid action'}, status=status.HTTP_400_BAD_REQUEST)
+
+        order_item.save()
+        order_item.refresh_from_db()
+
+        serializer = self.get_serializer(order_item)
+        return Response(serializer.data, status=status.HTTP_200_OK)
