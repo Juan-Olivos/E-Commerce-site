@@ -53,7 +53,7 @@ class ListOrderItemsView(generics.ListCreateAPIView):
         product = Product.objects.get(id=product_id)
 
         # pass from frontend, default = 1
-        quantity = int(request.data.get('quantity'))
+        quantity = int(request.data.get('quantity', 1))
 
         # check if this product exists as order_item in this order
         try:
@@ -73,7 +73,7 @@ class ListOrderItemsView(generics.ListCreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
     
 
-class RUDOrderItemView(generics.RetrieveUpdateDestroyAPIView):
+class RUDOrderItemView(generics.RetrieveUpdateAPIView):
     serializer_class = OrderItemSerializer
     permission_classes = [IsAuthenticated]
     queryset = OrderItem.objects.all()
@@ -98,3 +98,9 @@ class RUDOrderItemView(generics.RetrieveUpdateDestroyAPIView):
 
         serializer = self.get_serializer(order_item)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class DeleteCartItemView(generics.DestroyAPIView):
+    serializer_class = OrderItemSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = OrderItem.objects.all()

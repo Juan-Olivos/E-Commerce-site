@@ -4,30 +4,68 @@ import "../styles/Home.css";
 import CartItem from "./CartItem";
 
 function Home() {
+  const [items, setItems] = useState([]);
 
-    const [items, setItems] = useState([]);
+  useEffect(() => {
+    getItems();
+  }, []);
 
-    useEffect(() => {
+  const getItems = () => {
+    api
+      .get("/cart/")
+      .then((res) => res.data)
+      .then((data) => {
+        setItems(data);
+        console.log(data);
+      })
+      .catch((err) => alert(err));
+  };
+
+  const onIncrement = (id) => {
+    api
+      .patch(`/cart/update/${id}`, { action: "add" })
+      .then((res) => {
+        if (res.status === 200);
+        else alert("Failed to update item.");
         getItems();
-    }, []);
+      })
+      .catch((error) => alert(error));
+  };
 
-    const getItems = () => {
-        api
-            .get("/cart/")
-            .then((res) => res.data)
-            .then((data) => {
-                setItems(data);
-                console.log(data);
-            })
-            .catch((err) => alert(err));
-    }
+  const onDecrement = (id) => {
+    api
+      .patch(`/cart/update/${id}`, { action: "sub" })
+      .then((res) => {
+        if (res.status === 200);
+        else alert("Failed to update item.");
+        getItems();
+      })
+      .catch((error) => alert(error));
+  };
+
+  const deleteCartItem = (id) => {
+    api
+      .delete(`/cart/delete/${id}`)
+      .then((res) => {
+        if (res.status === 204);
+        else alert("Failed to delete item.");
+        getItems();
+      })
+      .catch((error) => alert(error));
+  };
 
   return (
     <div>
       <div>
         <h2>Cart items</h2>
         {items.map((item) => (
-          <CartItem Item={item} key={item.id}></CartItem>
+          <CartItem
+            Item={item}
+            onDelete={deleteCartItem}
+            onIncrement={onIncrement}
+            onDecrement={onDecrement}
+            key={item.id}
+          ></CartItem>
         ))}
       </div>
     </div>

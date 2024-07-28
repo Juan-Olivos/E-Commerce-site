@@ -4,25 +4,22 @@ import "../styles/Home.css";
 import Product from "../components/Product";
 
 function Home() {
+  const [products, setProducts] = useState([]);
 
-    const [products, setProducts] = useState([]);
+  useEffect(() => {
+    getProducts();
+  }, []);
 
-    useEffect(() => {
-        getProducts();
-    }, []);
-
-    const getProducts = () => {
-        api
-            .get("/products/list/")
-            .then((res) => res.data)
-            .then((data) => {
-                setProducts(data);
-                console.log(data);
-            })
-            .catch((err) => alert(err));
-        
-        
-    }
+  const getProducts = () => {
+    api
+      .get("/products/list/")
+      .then((res) => res.data)
+      .then((data) => {
+        setProducts(data);
+        console.log(data);
+      })
+      .catch((err) => alert(err));
+  };
 
   return (
     <div>
