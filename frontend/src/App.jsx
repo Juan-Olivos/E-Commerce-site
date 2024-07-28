@@ -26,7 +26,7 @@ function App() {
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<RegisterAndLogout />} />
         <Route
-          path="/user/cart"
+          path="/cart"
           element={
             <ProtectedRoute>
               <Cart />

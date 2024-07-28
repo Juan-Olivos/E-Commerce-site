@@ -25,7 +25,8 @@ urlpatterns = [
     path("register/", CreateUserView.as_view(), name="register"),
     path("api/token/", TokenObtainPairView.as_view(), name="get_token"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
-    path('user/cart/', ListCreateTestItemView.as_view(), name='test-item'),
+    # path('user/cart/', ListCreateTestItemView.as_view(), name='test-item'),
+    path('cart/', ListOrderItemsView.as_view(), name='order-items'),
     path('products/', include('api.urls')),
 
 ]

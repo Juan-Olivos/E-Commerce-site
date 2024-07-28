@@ -13,7 +13,7 @@ function Home() {
 
     const getItems = () => {
         api
-            .get("/user/cart/")
+            .get("/cart/")
             .then((res) => res.data)
             .then((data) => {
                 setItems(data);
@@ -25,7 +25,7 @@ function Home() {
   return (
     <div>
       <div>
-        <h2>Test Items</h2>
+        <h2>Cart items</h2>
         {items.map((item) => (
           <CartItem Item={item} key={item.id}></CartItem>
         ))}
