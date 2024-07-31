@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "../api";
+import { public_api } from "../api";
 import "../styles/Home.css";
 import Product from "../components/Product";
 
@@ -11,7 +11,7 @@ function Home() {
   }, []);
 
   const getProducts = () => {
-    api
+    public_api
       .get("/products/list/")
       .then((res) => res.data)
       .then((data) => {

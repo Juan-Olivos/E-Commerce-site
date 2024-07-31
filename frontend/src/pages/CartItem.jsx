@@ -1,6 +1,5 @@
 import React from "react";
 import "../styles/CartItem.css"
-import api from "../api";
 
 function CartItem({ Item, onDelete, onIncrement, onDecrement }) {
 

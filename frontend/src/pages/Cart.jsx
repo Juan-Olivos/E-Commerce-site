@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "../api";
+import { auth_api} from "../api";
 import "../styles/Home.css";
 import CartItem from "./CartItem";
 
@@ -11,7 +11,7 @@ function Home() {
   }, []);
 
   const getItems = () => {
-    api
+    auth_api
       .get("/cart/")
       .then((res) => res.data)
       .then((data) => {
@@ -22,7 +22,7 @@ function Home() {
   };
 
   const onIncrement = (id) => {
-    api
+    auth_api
       .patch(`/cart/update/${id}`, { action: "add" })
       .then((res) => {
         if (res.status === 200);
@@ -33,7 +33,7 @@ function Home() {
   };
 
   const onDecrement = (id) => {
-    api
+    auth_api
       .patch(`/cart/update/${id}`, { action: "sub" })
       .then((res) => {
         if (res.status === 200);
@@ -44,7 +44,7 @@ function Home() {
   };
 
   const deleteCartItem = (id) => {
-    api
+    auth_api
       .delete(`/cart/delete/${id}`)
       .then((res) => {
         if (res.status === 204);

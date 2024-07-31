@@ -1,16 +1,23 @@
 import React from "react";
 import "../styles/Product.css";
-import api from "../api";
+import { useNavigate } from "react-router-dom";
+import { auth_api } from "../api";
+import { ACCESS_TOKEN } from "../constants";
 
 function Product({ Product }) {
-
-    const product_id = Product.product;
-    const addToCart = (e) => {
-        e.preventDefault();
-        api
-            .post("/cart/", {
-                product: Product.id,
-            })
+  const navigate = useNavigate();
+  const addToCart = (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (!token) {
+      navigate("/login");
+    }
+    else {
+      auth_api.post("/cart/", {
+        product: Product.id,
+      });  
+    }
+    
   };
 
   return (
@@ -18,10 +25,9 @@ function Product({ Product }) {
       <p className="product-name">{Product.name}</p>
       <p className="product-price">{Product.price}</p>
       <p className="product-description">{Product.description}</p>
-      <button className="add-to-cart" onClick={addToCart}>Add to Cart</button> 
-      {/* <button className="delete-button" onClick={() => onDelete(Product.id)}>
-                Delete
-            </button> */}
+      <button className="add-to-cart" onClick={addToCart}>
+        Add to Cart
+      </button>
     </div>
   );
 }
