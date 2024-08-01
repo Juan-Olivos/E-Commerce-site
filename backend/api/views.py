@@ -6,6 +6,8 @@ from .models import *
 from django.db.models import F
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
+from .utils import process_payment
 
 # Create your views here.
 
@@ -104,3 +106,31 @@ class DeleteCartItemView(generics.DestroyAPIView):
     serializer_class = OrderItemSerializer
     permission_classes = [IsAuthenticated]
     queryset = OrderItem.objects.all()
+
+class CheckoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = CheckoutSerializer(data=request.data)
+        if serializer.is_valid():
+            order_id = serializer.validated_data['order_id']
+            order = Order.objects.get(id=order_id)
+
+            if not order.orderitem_set.exists():
+                return Response({"error": "No items in the order"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Calculate total price
+            total_price = sum(item.product.price * item.quantity for item in order.orderitem_set.all())
+            order.total_price = total_price
+            order.save()
+
+            # Process payment (33% random chance of failed order)
+            payment_successful = process_payment(order)
+
+            if payment_successful:
+                order.is_completed = True
+                order.save()
+                return Response(OrderSerializer(order).data, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Credit Card Authorization Failed"}, status=status.HTTP_402_PAYMENT_REQUIRED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

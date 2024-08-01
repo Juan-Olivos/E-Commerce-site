@@ -23,6 +23,7 @@ class Order(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
     date_ordered = models.DateTimeField(auto_now_add=True)
     is_completed = models.BooleanField(default=False)
+    total_price = models.FloatField(default=0.0)
 
     def __str__(self):
         return f'Cart for {self.customer.username}'
