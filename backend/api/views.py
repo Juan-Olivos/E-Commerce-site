@@ -17,11 +17,28 @@ class CreateUserView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
 class ProductList(generics.ListAPIView):
-    queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
     # all the products on the website should be viewed by anyone (need not be user)
     permission_classes = [AllowAny]
+    
+    def get_queryset(self):
+        queryset = Product.objects.all()
+        category = self.request.query_params.get('category')
+        sort_by_price = self.request.query_params.get('sort_price')
+        
+        if category:
+            product_category = ProductCategory.objects.get(name=category)          
+            queryset = Product.objects.filter(category=product_category)
+        
+        if sort_by_price:
+            if sort_by_price =="asc":
+                queryset = queryset.order_by("price")
+            elif sort_by_price == "desc":
+                queryset = queryset.order_by('-price')
+        
+        return queryset
+
 
 class ProductCreate(generics.CreateAPIView):
     queryset = Product.objects.all()
